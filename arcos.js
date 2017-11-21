@@ -4,6 +4,7 @@ var player = {};
 var wins = {
     // Object to store which cards win against which cards.
     'king': {
+        'king': 'draw',
         'general': true,
         'philosopher': true,
         'false prophet': true,
@@ -12,6 +13,7 @@ var wins = {
     },
     'general': {
         'king': false,
+        'general': 'draw',
         'philosopher': false,
         'false prophet': true,
         'aristocrat': false,
@@ -20,6 +22,7 @@ var wins = {
     'philosopher': {
         'king': false,
         'general': true,
+        'philosopher': 'draw',
         'false prophet': true,
         'aristocrat': false,
         'revolutionary': true
@@ -28,6 +31,7 @@ var wins = {
         'king': false,
         'general': false,
         'philosopher': false,
+        'false prophet': 'draw',
         'aristocrat': true,
         'revolutionary': true
     },
@@ -36,6 +40,7 @@ var wins = {
         'general': true,
         'philosopher': true,
         'false prophet': false,
+        'aristocrat': 'draw',
         'revolutionary': false
     },
     'revolutionary': {
@@ -43,7 +48,8 @@ var wins = {
         'general': false,
         'philosopher': false,
         'false prophet': false,
-        'aristocrat': true
+        'aristocrat': true,
+        'revolutionary': 'draw'
     },
 }
 
@@ -56,7 +62,7 @@ var Hand = function () {
 Hand.prototype.discard = function (card) {
     var index = this.cards.indexOf(card)
     if (index > -1) {
-        this.discarded.push(this.cards.splice(index, 1));
+        this.discarded.push(this.cards.splice(index, 1)[0]);
         return true;
     }
 }
@@ -80,8 +86,8 @@ Hand.prototype.restore = function () {
 player.playHand = function (attack) {
     if (!this.hand.cards.includes(attack)) { return '!' }
     var defense = opponent.chooseCard();
+    opponent.rememberMove([opponent.hand.cards, player.hand.cards], defense, wins[defense][attack]);
     console.log(attack, defense);
-    if (attack === defense) { return [defense, 'draw']; }
     return [defense, wins[attack][defense]];
 }
 
@@ -101,13 +107,77 @@ player.play = function (card) {
             player.hand.discard(card);
         }
     }
+    console.log('Player:', player.hand.cards);
+    console.log('Opponent:', opponent.hand.cards);
     return playerWins;
 }
 
 opponent.chooseCard = function () {
-    var choice = this.hand.cards[Math.floor(Math.random() * this.hand.cards.length)];
+    var best = false;
+    var choices = [];
+    var i;
+    var memKey = this.memKey([this.hand.cards, player.hand.cards]);
+    if (!this.mem[memKey]) { // If it's never seen this gamestate before
+        console.log('Choosing at random.');
+        choices = this.hand.cards;
+    } else {
+        var cardScore;
+        for (i=0 ; i<this.hand.cards.length ; i++) {
+            cardScore = this.mem[memKey][this.hand.cards[i][0]];
+            if (best === false) {
+                best = cardScore;
+            } else if (best < cardScore) {
+                best = cardScore;
+            }
+        }
+        for (i=0 ; i<this.hand.cards.length ; i++) {
+            cardScore = this.mem[memKey][this.hand.cards[i][0]];
+            if (cardScore === best) {
+                choices.push(this.hand.cards[i]);
+            }
+        }
+    }
+    var choice = choices[Math.floor(Math.random() * choices.length)];
     return choice;
 }
+
+if (window.localStorage.getItem('arcos-opponent-memory')) {
+    opponent.mem = JSON.parse(window.localStorage.getItem('arcos-opponent-memory'));
+} else {
+    opponent.mem = {};
+}
+
+opponent.memKey = function (state /* state = [ownHand, playerHand] */) {
+    var memKey;
+    var contracted = [[],[]];
+    state[0].map((card) => {contracted[0].push(card[0]);});
+    state[1].map((card) => {contracted[1].push(card[0]);});
+    memKey = contracted[0].join('') + '-' + contracted[1].join('');
+    return memKey;
+}
+
+opponent.rememberMove = function (state, move, success) {
+    var memKey = this.memKey(state);
+    if (!this.mem[memKey]) {
+        this.mem[memKey] = {
+            'k': 0,
+            'g': 0,
+            'p': 0,
+            'f': 0,
+            'a': 0,
+            'r': 0,
+        };
+    }
+    if (success === 'draw') { return null; } // Don't adjust the score if in a draw
+    this.mem[memKey][move[0]] += success ? 1 : -1;
+};
+
+var reset = function () {
+    clear();
+    window.localStorage.setItem('arcos-opponent-memory', JSON.stringify(opponent.mem));
+    opponent.hand = new Hand ();
+    player.hand = new Hand ();
+};
 
 opponent.hand = new Hand ();
 player.hand = new Hand ();
