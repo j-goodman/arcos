@@ -119,7 +119,13 @@ opponent.chooseCard = function () {
     var memKey = this.memKey([this.hand.cards, player.hand.cards]);
     if (!this.mem[memKey]) { // If it's never seen this gamestate before
         console.log('Choosing at random.');
-        choices = this.hand.cards;
+        // Filter out cards that can only possibly lose
+        choices = this.hand.cards.filter((card) => {
+            return player.hand.cards.filter((playerCard) => {
+                return wins[card][playerCard];
+            }).length > 0;
+        });
+        if (choices.length === 0) { choices = this.hand.cards; }
     } else {
         var cardScore;
         for (i=0 ; i<this.hand.cards.length ; i++) {
