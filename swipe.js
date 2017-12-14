@@ -2,27 +2,30 @@
 
 var initTouchControls = function () {
   // Setup swipe controls for mobile devices.
-  var section;
   window.touchLog = {};
-  section = document.getElementsByClassName('lang-course-details')[0];
-  section.addEventListener('touchstart', touchStart, false);
-  section.addEventListener('touchend', touchEnd, false);
+  document = document.getElementsByClassName('lang-course-details')[0];
+  document.addEventListener('touchstart', touchStart, false);
+  document.addEventListener('touchend', touchEnd, false);
 }
 
-var touchStart = function () {
+var touchStart = function (evt) {
    // Fires when the user touches the screen.
+   document.body.style.background = '#fff';
    console.log('Touchstart.');
-   window.touchLog.startX = event.changedTouches[0].screenX;
+   window.touchLog.startX = evt.changedTouches[0].screenX;
 }
 
-var touchEnd = function () {
+var touchEnd = function (evt) {
     // Fires when the user picks their finger up.
-    window.touchLog.endX = event.changedTouches[0].screenX;
+    document.body.style.background = '#000';
+    window.touchLog.endX = evt.changedTouches[0].screenX;
     if (window.touchLog.endX < window.touchLog.startX - 20) {
         console.log('Swipe right.');
+        document.body.style.background = '#a00';
         window.swipeRight();
     } else if (window.touchLog.endX > window.touchLog.startX + 20) {
         console.log('Swipe left.');
+        document.body.style.background = '#00a';
         window.swipeLeft();
     }
 }

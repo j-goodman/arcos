@@ -8,4 +8,6 @@ body {
 
 canvas {
     background: #301;
+    width: 100%;
+    height: 100%;
 }
