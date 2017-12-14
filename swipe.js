@@ -3,10 +3,9 @@
 var initTouchControls = function () {
   // Setup swipe controls for mobile devices.
   window.touchLog = {};
-  document = document.getElementsByClassName('lang-course-details')[0];
-  document.addEventListener('touchstart', touchStart, false);
-  document.addEventListener('touchend', touchEnd, false);
-}
+  var el = document.getElementsByTagName("canvas")[0];
+  el.addEventListener("touchstart", touchStart, false);
+  el.addEventListener("touchend", touchEnd, false);}
 
 var touchStart = function (evt) {
    // Fires when the user touches the screen.
