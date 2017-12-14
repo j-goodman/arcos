@@ -9,6 +9,7 @@ onload = () => {
     ctx = canvas.getContext('2d');
     cards = generateCards();
     drawCards(canvas, ctx, cards);
+    initTouchControls();
 };
 
 positions = {
@@ -41,6 +42,7 @@ var Card = function (image) {
 };
 
 var drawCards = (canvas, ctx, cards) => {
+    console.log('clearing.');
     ctx.clearRect(
         0,
         0,
@@ -48,6 +50,7 @@ var drawCards = (canvas, ctx, cards) => {
         canvas.height
     );
     cards.map((card) => {
+        console.log('Drawing', card.image.src.split('/').pop());
         ctx.drawImage(
             card.image,
             card.x,
@@ -69,7 +72,7 @@ var generateCards = () => {
     aristocrat = new Card ('./images/aristocrat.png');
     revolutionary = new Card ('./images/revolutionary.png');
     reverse = new Card ('./images/reverse.png');
-    deck = [reverse, revolutionary, general, falseProphet, philosopher, aristocrat, king];
+    deck = [reverse, revolutionary, general, falseProphet, philosopher, aristocrat, king, reverse];
     deck.map((card, index) => {
         card.x = positions.center.x; // + 200 - index * 40;
         card.y = positions.center.y;
