@@ -34,6 +34,20 @@ positions = {
       height: 540,
       width: 405,
     },
+    offtop: {
+      x: 37.5,
+      y: -560,
+      z: 1,
+      height: 540,
+      width: 405,
+    },
+    offbottom: {
+      x: 37.5,
+      y: 560,
+      z: 1,
+      height: 540,
+      width: 405,
+    },
 }
 
 var Card = function (image) {
@@ -42,7 +56,6 @@ var Card = function (image) {
 };
 
 var drawCards = (canvas, ctx, cards) => {
-    console.log('clearing.');
     ctx.clearRect(
         0,
         0,
@@ -50,7 +63,6 @@ var drawCards = (canvas, ctx, cards) => {
         canvas.height
     );
     cards.map((card) => {
-        console.log('Drawing', card.image.src.split('/').pop());
         ctx.drawImage(
             card.image,
             card.x,
@@ -88,7 +100,7 @@ var moveTo = (card, x, y) => {
     //*//
     int = window.setInterval(() => {
         card.x += card.x > x ? -60 : 60;
-        // card.y += card.y > y ? -10) : 10);
+        card.y += card.y > y ? -60 : 60;
         drawCards(canvas, ctx, cards);
         if (Math.abs(card.x - x) < 70 && Math.abs(card.y - y) < 70) {
           window.clearInterval(int);
@@ -103,4 +115,14 @@ window.swipeLeft = () => {
 
 window.swipeRight = () => {
     moveTo(cards[cards.length-1], positions.offright.x, positions.offright.y);
+}
+
+window.swipeUp = () => {
+    console.log('^');
+    moveTo(cards[cards.length-1], positions.offtop.y, positions.offtop.x);
+}
+
+window.swipeDown = () => {
+    console.log('v');
+    moveTo(cards[cards.length-1], positions.offbottom.y, positions.offbottom.x);
 }

@@ -10,14 +10,22 @@ var initTouchControls = function () {
 var touchStart = function (evt) {
    // Fires when the user touches the screen.
    window.touchLog.startX = evt.changedTouches[0].screenX;
+   window.touchLog.startY = evt.changedTouches[0].screenY;
 }
 
 var touchEnd = function (evt) {
     // Fires when the user picks their finger up.
     window.touchLog.endX = evt.changedTouches[0].screenX;
-    if (window.touchLog.endX < window.touchLog.startX - 40) {
+    window.touchLog.endY = evt.changedTouches[0].screenY;
+    if (
+      window.touchLog.endX < window.touchLog.startX - 40 &&
+      Math.abs(window.touchLog.endY - window.touchLog.startY) < 100
+    ) {
         window.swipeLeft();
-    } else if (window.touchLog.endX > window.touchLog.startX + 40) {
+    } else if (
+      window.touchLog.endX > window.touchLog.startX + 40 &&
+      Math.abs(window.touchLog.endY - window.touchLog.startY) < 100
+    ) {
         window.swipeRight();
     }
 }
