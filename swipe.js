@@ -20,9 +20,9 @@ var touchEnd = function () {
     window.touchLog.endX = event.changedTouches[0].screenX;
     if (window.touchLog.endX < window.touchLog.startX - 20) {
         console.log('Swipe right.');
-        this.swipeRight();
+        window.swipeRight();
     } else if (window.touchLog.endX > window.touchLog.startX + 20) {
         console.log('Swipe left.');
-        this.swipeLeft();
+        window.swipeLeft();
     }
 }

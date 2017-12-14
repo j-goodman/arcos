@@ -19,6 +19,20 @@ positions = {
       height: 540,
       width: 405,
     },
+    offleft: {
+      x: -480,
+      y: 60,
+      z: 1,
+      height: 540,
+      width: 405,
+    },
+    offright: {
+      x: 560,
+      y: 60,
+      z: 1,
+      height: 540,
+      width: 405,
+    },
 }
 
 var Card = function (image) {
@@ -27,8 +41,13 @@ var Card = function (image) {
 };
 
 var drawCards = (canvas, ctx, cards) => {
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
     cards.map((card) => {
-        console.log('Drawing image', card)
         ctx.drawImage(
             card.image,
             card.x,
@@ -49,13 +68,14 @@ var generateCards = () => {
     falseProphet = new Card ('./images/false-prophet.png');
     aristocrat = new Card ('./images/aristocrat.png');
     revolutionary = new Card ('./images/revolutionary.png');
-    deck = [revolutionary, aristocrat, falseProphet, philosopher, general, king];
+    reverse = new Card ('./images/reverse.png');
+    deck = [reverse, revolutionary, general, falseProphet, philosopher, aristocrat, king];
     deck.map((card, index) => {
-      card.x = positions.center.x + 200 - index * 40;
-      card.y = positions.center.y;
-      card.z = positions.center.z;
-      card.height = positions.center.height;
-      card.width = positions.center.width;
+        card.x = positions.center.x; // + 200 - index * 40;
+        card.y = positions.center.y;
+        card.z = positions.center.z;
+        card.height = positions.center.height;
+        card.width = positions.center.width;
     });
     return deck;
 };
@@ -63,9 +83,21 @@ var generateCards = () => {
 var moveTo = (card, x, y) => {
     var int;
     //*//
-    int = setInterval(() => {
-        card.x += card.x > x ? -1 : 1;
-        card.y += card.y > y ? -1 : 1;
+    int = window.setInterval(() => {
+        card.x += card.x > x ? -60 : 60;
+        // card.y += card.y > y ? -10) : 10);
         drawCards(canvas, ctx, cards);
+        if (Math.abs(card.x - x) < 70 && Math.abs(card.y - y) < 70) {
+          window.clearInterval(int);
+          cards.pop();
+        }
     }, 32);
+}
+
+window.swipeLeft = () => {
+    moveTo(cards[cards.length-1], positions.offleft.x, positions.offleft.y);
+}
+
+window.swipeRight = () => {
+    moveTo(cards[cards.length-1], positions.offright.x, positions.offright.y);
 }
