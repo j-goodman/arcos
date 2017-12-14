@@ -100,7 +100,7 @@ var moveTo = (card, x, y) => {
     //*//
     int = window.setInterval(() => {
         card.x += card.x > x ? -60 : 60;
-        card.y += card.y > y ? -60 : 60;
+        // card.y += card.y > y ? -60 : 60;
         drawCards(canvas, ctx, cards);
         if (Math.abs(card.x - x) < 70 && Math.abs(card.y - y) < 70) {
           window.clearInterval(int);
