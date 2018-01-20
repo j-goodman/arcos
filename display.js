@@ -1,66 +1,70 @@
 var canvas;
 var ctx;
 var cards = [];
+var focusIndex = 0;
 var positions;
 
 onload = () => {
     //*//
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
-    cards = generateCards();
-    drawCards(canvas, ctx, cards);
+    cards = generateCards(drawCards.bind(null, canvas, ctx, cards));
     initTouchControls();
 };
 
 positions = {
     center: {
-      x: 37.5,
-      y: 60,
+      x: 0,
+      y: 0,
       z: 1,
-      height: 540,
-      width: 405,
+      height: 620,
+      width: 470,
     },
     offleft: {
-      x: -480,
-      y: 60,
+      x: -520,
+      y: 0,
       z: 1,
-      height: 540,
-      width: 405,
+      height: 620,
+      width: 470,
     },
     offright: {
-      x: 560,
-      y: 60,
+      x: 580,
+      y: 0,
       z: 1,
-      height: 540,
-      width: 405,
+      height: 620,
+      width: 470,
     },
     offtop: {
-      x: 37.5,
+      x: 0,
       y: -560,
       z: 1,
-      height: 540,
-      width: 405,
+      height: 620,
+      width: 470,
     },
     offbottom: {
-      x: 37.5,
+      x: 0,
       y: 560,
       z: 1,
-      height: 540,
-      width: 405,
+      height: 620,
+      width: 470,
     },
 }
 
 var Card = function (image) {
     this.image = new Image ();
+    this.imageLoaded = false;
+    this.image.onload = () => {
+      this.imageLoaded = true;
+    }
     this.image.src = image;
 };
 
-var drawCards = (canvas, ctx, cards) => {
+var drawCards = (canvas, ctx) => {
     ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
+      0,
+      0,
+      canvas.width,
+      canvas.height
     );
     cards.map((card) => {
         ctx.drawImage(
@@ -73,9 +77,10 @@ var drawCards = (canvas, ctx, cards) => {
     });
 }
 
-var generateCards = () => {
+var generateCards = (onCardLoad) => {
     var aristocrat;
     var deck = [];
+    var imageLoadTrigger;
     //*//
     king = new Card ('./images/king.png');
     general = new Card ('./images/general.png');
@@ -84,13 +89,27 @@ var generateCards = () => {
     aristocrat = new Card ('./images/aristocrat.png');
     revolutionary = new Card ('./images/revolutionary.png');
     reverse = new Card ('./images/reverse.png');
-    deck = [reverse, revolutionary, general, falseProphet, philosopher, aristocrat, king, reverse];
+    deck = [revolutionary, general, falseProphet, philosopher, aristocrat, king];
     deck.map((card, index) => {
-        card.x = positions.center.x; // + 200 - index * 40;
+        card.x = positions.center.x;
         card.y = positions.center.y;
         card.z = positions.center.z;
         card.height = positions.center.height;
         card.width = positions.center.width;
+    });
+    imageLoadTrigger = {
+      loadCount: 0,
+      finishedCount: deck.length,
+      event: onCardLoad,
+    };
+    imageLoadTrigger.progress = function () {
+      this.loadCount += 1;
+      if (this.loadCount == this.finishedCount) {
+        this.event();
+      }
+    }.bind(imageLoadTrigger);
+    deck.forEach((card) => {
+      card.image.onload = imageLoadTrigger.progress;
     });
     return deck;
 };
