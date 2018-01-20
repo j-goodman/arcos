@@ -122,7 +122,7 @@ var moveTo = (card, x, y) => {
     var yDistance;
     //*//
     frame = 0;
-    totalFrames = 16;
+    totalFrames = 8;
     xDistance = Math.abs(card.x - x);
     yDistance = Math.abs(card.y - y);
     int = window.setInterval(() => {
