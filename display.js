@@ -116,32 +116,50 @@ var generateCards = (onCardLoad) => {
 
 var moveTo = (card, x, y) => {
     var int;
+    var frame;
+    var totalFrames;
+    var xDistance;
+    var yDistance;
     //*//
+    frame = 0;
+    totalFrames = 16;
+    xDistance = Math.abs(card.x - x);
+    yDistance = Math.abs(card.y - y);
     int = window.setInterval(() => {
-        card.x += card.x > x ? -60 : 60;
-        // card.y += card.y > y ? -60 : 60;
-        drawCards(canvas, ctx, cards);
-        if (Math.abs(card.x - x) < 70 && Math.abs(card.y - y) < 70) {
-          window.clearInterval(int);
-          cards.pop();
-        }
+      frame += 1;
+      if (frame >= totalFrames) {
+        window.clearInterval(int);
+      }
+      card.x += (xDistance / totalFrames) * (card.x < x ? 1 : -1);
+      card.y += (yDistance / totalFrames) * (card.y < y ? 1 : -1);
+      drawCards(canvas, ctx, cards);
     }, 32);
 }
 
-window.swipeLeft = () => {
-    moveTo(cards[cards.length-1], positions.offleft.x, positions.offleft.y);
+var updateDeckDisplay = () => {
+    cards.forEach((card, index) => {
+        if (index < focusIndex) {
+          moveTo(card, positions.offleft.x, positions.offleft.y);
+        } else if (index > focusIndex) {
+          moveTo(card, positions.offright.x, positions.offright.y);
+        } else {
+          moveTo(card, positions.center.x, positions.center.y);
+        }
+    });
 }
+
+window.swipeLeft = () => {
+    focusIndex += focusIndex < cards.length - 1 ? 1 : 0;
+    updateDeckDisplay();
+    // moveTo(cards[cards.length-1], positions.offleft.x, positions.offleft.y);
+};
 
 window.swipeRight = () => {
-    moveTo(cards[cards.length-1], positions.offright.x, positions.offright.y);
-}
+    focusIndex -= focusIndex > 0 ? 1 : 0;
+    updateDeckDisplay();
+    // moveTo(cards[cards.length-1], positions.offright.x, positions.offright.y);
+};
 
-window.swipeUp = () => {
-    console.log('^');
-    moveTo(cards[cards.length-1], positions.offtop.y, positions.offtop.x);
-}
+window.swipeUp = () => {};
 
-window.swipeDown = () => {
-    console.log('v');
-    moveTo(cards[cards.length-1], positions.offbottom.y, positions.offbottom.x);
-}
+window.swipeDown = () => {};
