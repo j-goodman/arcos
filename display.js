@@ -1,7 +1,7 @@
 var canvas;
 var ctx;
 var cards = [];
-var focusIndex = 0;
+var focusIndex = 5;
 var positions;
 
 onload = () => {
