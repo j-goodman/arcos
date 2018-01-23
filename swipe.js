@@ -27,5 +27,15 @@ var touchEnd = function (evt) {
       Math.abs(window.touchLog.endY - window.touchLog.startY) < 100
     ) {
         window.swipeRight();
+    } else if (
+      window.touchLog.endY < window.touchLog.startY - 40 &&
+      Math.abs(window.touchLog.endX - window.touchLog.startX) < 100
+    ) {
+        window.swipeUp();
+    } else if (
+      window.touchLog.endY > window.touchLog.startY + 40 &&
+      Math.abs(window.touchLog.endX - window.touchLog.startX) < 100
+    ) {
+        window.swipeDown();
     }
 }

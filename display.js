@@ -50,8 +50,9 @@ positions = {
     },
 }
 
-var Card = function (image) {
+var Card = function (image, name) {
     this.image = new Image ();
+    this.name = name;
     this.imageLoaded = false;
     this.image.onload = () => {
       this.imageLoaded = true;
@@ -82,13 +83,13 @@ var generateCards = (onCardLoad) => {
     var deck = [];
     var imageLoadTrigger;
     //*//
-    king = new Card ('./images/king.png');
-    general = new Card ('./images/general.png');
-    philosopher = new Card ('./images/philosopher.png');
-    falseProphet = new Card ('./images/false-prophet.png');
-    aristocrat = new Card ('./images/aristocrat.png');
-    revolutionary = new Card ('./images/revolutionary.png');
-    reverse = new Card ('./images/reverse.png');
+    king = new Card ('./images/king.png', 'king');
+    general = new Card ('./images/general.png', 'general');
+    philosopher = new Card ('./images/philosopher.png', 'philosopher');
+    falseProphet = new Card ('./images/false-prophet.png', 'false prophet');
+    aristocrat = new Card ('./images/aristocrat.png', 'aristocrat');
+    revolutionary = new Card ('./images/revolutionary.png', 'revolutionary');
+    reverse = new Card ('./images/reverse.png', 'reverse');
     deck = [revolutionary, general, falseProphet, philosopher, aristocrat, king];
     deck.map((card, index) => {
         card.x = positions.center.x;
@@ -151,15 +152,27 @@ var updateDeckDisplay = () => {
 window.swipeLeft = () => {
     focusIndex += focusIndex < cards.length - 1 ? 1 : 0;
     updateDeckDisplay();
-    // moveTo(cards[cards.length-1], positions.offleft.x, positions.offleft.y);
 };
 
 window.swipeRight = () => {
     focusIndex -= focusIndex > 0 ? 1 : 0;
     updateDeckDisplay();
-    // moveTo(cards[cards.length-1], positions.offright.x, positions.offright.y);
 };
 
-window.swipeUp = () => {};
+window.swipeUp = () => {
+    var win;
+    win = play(cards[focusIndex].name);
+    if (win === true) {
+        console.log(win);
+    } else if (win === false) {
+        // Remove the losing card from the player's hand
+        cards = cards.filter((card) => {
+            return card.name !== cards[focusIndex].name;
+        });
+    }
+    updateDeckDisplay();
+};
 
-window.swipeDown = () => {};
+window.swipeDown = () => {
+    // Reveal information about the selected card.
+};
