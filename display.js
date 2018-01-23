@@ -48,6 +48,14 @@ positions = {
       height: 620,
       width: 470,
     },
+    riverStart: {
+      x: 0,
+      y: 480,
+      z: 1,
+      height: 150,
+      width: 108,
+      fan: 76,
+    }
 }
 
 var Card = function (image, name) {
@@ -115,24 +123,34 @@ var generateCards = (onCardLoad) => {
     return deck;
 };
 
-var moveTo = (card, x, y) => {
+var moveTo = (card, x, y, width, height) => {
     var int;
     var frame;
     var totalFrames;
     var xDistance;
     var yDistance;
+    var widthDifference;
+    var heightDifference;
     //*//
+    width = width ? width : card.width;
+    height = height ? height : card.height;
     frame = 0;
     totalFrames = 8;
     xDistance = Math.abs(card.x - x);
     yDistance = Math.abs(card.y - y);
+    widthDifference = Math.abs(card.width - width);
+    heightDifference = Math.abs(card.height - height);
     int = window.setInterval(() => {
       frame += 1;
-      if (frame >= totalFrames) {
-        window.clearInterval(int);
-      }
       card.x += (xDistance / totalFrames) * (card.x < x ? 1 : -1);
       card.y += (yDistance / totalFrames) * (card.y < y ? 1 : -1);
+      card.width += (widthDifference / totalFrames) * (card.width > x ? 1 : -1);
+      card.height += (heightDifference / totalFrames) * (card.height > y ? 1 : -1);
+      if (frame >= totalFrames) {
+        window.clearInterval(int);
+        card.width = width;
+        card.height = height;
+      }
       drawCards(canvas, ctx, cards);
     }, 32);
 }
@@ -140,12 +158,20 @@ var moveTo = (card, x, y) => {
 var updateDeckDisplay = () => {
     cards.forEach((card, index) => {
         if (index < focusIndex) {
-          moveTo(card, positions.offleft.x, positions.offleft.y);
+          moveTo(card, positions.offleft.x, positions.offleft.y, positions.offleft.width, positions.offleft.height);
         } else if (index > focusIndex) {
-          moveTo(card, positions.offright.x, positions.offright.y);
+          moveTo(card, positions.offright.x, positions.offright.y, positions.offright.width, positions.offright.height);
         } else {
-          moveTo(card, positions.center.x, positions.center.y);
+          moveTo(card, positions.center.x, positions.center.y, positions.center.width, positions.center.height);
         }
+    });
+}
+
+var zoomOut = () => {
+    var pos;
+    cards.forEach((card, index) => {
+        pos = positions.riverStart;
+        moveTo(card, pos.x + (index * pos.fan), pos.y, pos.width, pos.height);
     });
 }
 
@@ -170,9 +196,9 @@ window.swipeUp = () => {
             return card.name !== cards[focusIndex].name;
         });
     }
-    updateDeckDisplay();
+    zoomOut();
 };
 
 window.swipeDown = () => {
-    // Reveal information about the selected card.
+    updateDeckDisplay();
 };
