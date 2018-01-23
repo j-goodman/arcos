@@ -2,6 +2,9 @@
 
 var initTouchControls = function () {
   // Setup swipe controls for mobile devices.
+  document.ontouchmove = function(event) {
+    event.preventDefault();
+  }
   window.touchLog = {};
   var el = document.getElementsByTagName("canvas")[0];
   el.addEventListener("touchstart", touchStart, false);
