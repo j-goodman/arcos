@@ -1,6 +1,7 @@
 var canvas;
 var ctx;
 var cards = [];
+var opponentCards = [];
 var focusIndex = 5;
 var positions;
 
@@ -8,11 +9,13 @@ onload = () => {
     //*//
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
-    cards = generateCards(drawCards.bind(null, canvas, ctx, cards));
+    cards = generateCards(drawCards.bind(null, canvas, ctx, cards), 'player');
+    opponentCards = generateCards(drawCards.bind(null, canvas, ctx, opponentCards), 'opponent');
     initTouchControls();
 };
 
 positions = {
+  player: {
     center: {
       x: 0,
       y: 0,
@@ -34,20 +37,6 @@ positions = {
       height: 620,
       width: 470,
     },
-    offtop: {
-      x: 0,
-      y: -560,
-      z: 1,
-      height: 620,
-      width: 470,
-    },
-    offbottom: {
-      x: 0,
-      y: 560,
-      z: 1,
-      height: 620,
-      width: 470,
-    },
     riverStart: {
       x: 0,
       y: 480,
@@ -56,6 +45,24 @@ positions = {
       width: 108,
       fan: 76,
     }
+  },
+  opponent: {
+    center: {
+      x: 0,
+      y: -1000,
+      z: 1,
+      height: 620,
+      width: 470,
+    },
+    riverStart: {
+      x: 0,
+      y: 320,
+      z: 1,
+      height: 150,
+      width: 108,
+      fan: 76,
+    }
+  },
 }
 
 var Card = function (image, name) {
@@ -68,13 +75,16 @@ var Card = function (image, name) {
     this.image.src = image;
 };
 
-var drawCards = (canvas, ctx) => {
-    ctx.clearRect(
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
+var clearCanvas = (canvas, ctx) => {
+  ctx.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+}
+
+var drawCards = (canvas, ctx, cards) => {
     cards.map((card) => {
         ctx.drawImage(
             card.image,
@@ -86,7 +96,7 @@ var drawCards = (canvas, ctx) => {
     });
 }
 
-var generateCards = (onCardLoad) => {
+var generateCards = (onCardLoad, holder) => {
     var aristocrat;
     var deck = [];
     var imageLoadTrigger;
@@ -100,11 +110,11 @@ var generateCards = (onCardLoad) => {
     reverse = new Card ('./images/reverse.png', 'reverse');
     deck = [revolutionary, general, falseProphet, philosopher, aristocrat, king];
     deck.map((card, index) => {
-        card.x = positions.center.x;
-        card.y = positions.center.y;
-        card.z = positions.center.z;
-        card.height = positions.center.height;
-        card.width = positions.center.width;
+        card.x = positions[holder].center.x;
+        card.y = positions[holder].center.y;
+        card.z = positions[holder].center.z;
+        card.height = positions[holder].center.height;
+        card.width = positions[holder].center.width;
     });
     imageLoadTrigger = {
       loadCount: 0,
@@ -151,7 +161,9 @@ var moveTo = (card, x, y, width, height) => {
         card.width = width;
         card.height = height;
       }
+      clearCanvas(canvas, ctx);
       drawCards(canvas, ctx, cards);
+      drawCards(canvas, ctx, opponentCards);
     }, 32);
 }
 
@@ -170,7 +182,11 @@ var updateDeckDisplay = () => {
 var zoomOut = () => {
     var pos;
     cards.forEach((card, index) => {
-        pos = positions.riverStart;
+        pos = positions.player.riverStart;
+        moveTo(card, pos.x + (index * pos.fan), pos.y, pos.width, pos.height);
+    });
+    opponentCards.forEach((card, index) => {
+        pos = positions.opponent.riverStart;
         moveTo(card, pos.x + (index * pos.fan), pos.y, pos.width, pos.height);
     });
 }
@@ -186,8 +202,10 @@ window.swipeRight = () => {
 };
 
 window.swipeUp = () => {
+    var result;
     var win;
-    win = play(cards[focusIndex].name);
+    result = play(cards[focusIndex].name);
+    win = result[0];
     if (win === true) {
         console.log(win);
     } else if (win === false) {

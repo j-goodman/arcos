@@ -92,6 +92,7 @@ player.playHand = function (attack) {
 }
 
 player.play = function (card) {
+    var gameOver;
     var tuple = this.playHand(card);
     var playerWins = tuple[1];
     var reply = tuple[0];
@@ -109,8 +110,27 @@ player.play = function (card) {
     }
     console.log('Player:', player.hand.cards);
     console.log('Opponent:', opponent.hand.cards);
-    return playerWins;
-}
+    gameOver = this.gameIsOver();
+    if (gameOver) {
+      reset();
+      console.log(gameOver);
+      console.log('Resetting game...');
+    }
+    return [playerWins, card, reply];
+};
+
+player.gameIsOver = function () {
+  var win = false;
+  if (player.hand.cards.length === 0 && opponent.hand.cards.length > 0) {
+    win = 'OPPONENT WINS';
+  } else if (opponent.hand.cards.length === 0 && player.hand.cards.length > 0) {
+    win = 'PLAYER WINS';
+  } else if (player.hand.cards.length === 0 && opponent.hand.cards.length === 0) {
+    player.hand.restore();
+    opponent.hand.restore();
+  }
+  return win;
+};
 
 opponent.chooseCard = function () {
     var best = false;
@@ -145,7 +165,7 @@ opponent.chooseCard = function () {
     }
     var choice = choices[Math.floor(Math.random() * choices.length)];
     return choice;
-}
+};
 
 if (window.localStorage.getItem('arcos-opponent-memory')) {
     opponent.mem = JSON.parse(window.localStorage.getItem('arcos-opponent-memory'));
