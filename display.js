@@ -1,4 +1,5 @@
 var canvas
+var info
 var canvasHeight
 var ctx
 var cards = []
@@ -11,7 +12,9 @@ var positions
 onload = () => {
     //*//
     canvas = document.getElementById('canvas')
+    info = document.getElementById('info')
     canvas.style.transform = `translateY(${(window.innerHeight - canvas.getBoundingClientRect().height)/2}px)`
+    info.style.transform = `translateY(-${(window.innerHeight - info.getBoundingClientRect().height)/3.4}px)`
 
     positions.player.riverStart.y = canvas.height - 330
     positions.player.table.y = canvas.height / 2
@@ -21,7 +24,10 @@ onload = () => {
     cards = generateCards(drawCards.bind(null, canvas, ctx, cards), 'player')
     opponentCards = generateCards(drawCards.bind(null, canvas, ctx, opponentCards), 'opponent')
     initTouchControls()
-    setTimeout(drawCards.bind(null, canvas, ctx, cards), 1000)
+    setTimeout(() => {
+        drawCards(canvas, ctx, cards)
+        info.innerText = ''
+    }, 1000)
     currentCards = cards.map(card => { return card })
     currentOpponentCards = opponentCards.map(card => { return card })
 }
@@ -273,7 +279,8 @@ window.swipeUp = () => {
             zoomOut()
             setTimeout(() => {
                 zoomIn()
-            }, 500)
+            }, 1000)
+            info.innerText = ''
         }, 2000)
 
         moveTo(playerPlay, positions.player.table.x, positions.player.table.y, positions.player.table.width, positions.player.table.height)

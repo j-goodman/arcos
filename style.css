@@ -1,8 +1,8 @@
 body {
     align-items: center;
-    background: #301;
+    background: #101;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     overflow-y: hidden;
 }
@@ -11,4 +11,12 @@ canvas {
     background: #301;
     width: 100%;
     height: 100%;
+}
+
+#info {
+    color: #fff;
+    font-family: 'Slabo 27px', monospace;
+    font-size: 50px;
+    text-align: center;
+    width: 100%;
 }
