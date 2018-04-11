@@ -105,7 +105,7 @@ player.play = function (card) {
     if (playerWins === 'draw') {
         player.hand.hold(card);
         opponent.hand.hold(reply);
-        info.innerText = 'DRAW'
+        // info.innerText = 'DRAW'
     } else {
         opponent.hand.restore();
         player.hand.restore();
