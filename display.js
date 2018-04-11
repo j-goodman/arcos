@@ -12,6 +12,7 @@ onload = () => {
     cards = generateCards(drawCards.bind(null, canvas, ctx, cards), 'player');
     opponentCards = generateCards(drawCards.bind(null, canvas, ctx, opponentCards), 'opponent');
     initTouchControls();
+    setTimeout(drawCards.bind(null, canvas, ctx, cards), 1000)
 };
 
 positions = {
@@ -86,6 +87,7 @@ var clearCanvas = (canvas, ctx) => {
 
 var drawCards = (canvas, ctx, cards) => {
     cards.map((card) => {
+        console.log('Drawing ' + card.name);
         ctx.drawImage(
             card.image,
             card.x,
@@ -170,11 +172,11 @@ var moveTo = (card, x, y, width, height) => {
 var updateDeckDisplay = () => {
     cards.forEach((card, index) => {
         if (index < focusIndex) {
-          moveTo(card, positions.offleft.x, positions.offleft.y, positions.offleft.width, positions.offleft.height);
+          moveTo(card, positions.player.offleft.x, positions.player.offleft.y, positions.player.offleft.width, positions.player.offleft.height);
         } else if (index > focusIndex) {
-          moveTo(card, positions.offright.x, positions.offright.y, positions.offright.width, positions.offright.height);
+          moveTo(card, positions.player.offright.x, positions.player.offright.y, positions.player.offright.width, positions.player.offright.height);
         } else {
-          moveTo(card, positions.center.x, positions.center.y, positions.center.width, positions.center.height);
+          moveTo(card, positions.player.center.x, positions.player.center.y, positions.player.center.width, positions.player.center.height);
         }
     });
 }
