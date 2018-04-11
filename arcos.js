@@ -1,6 +1,9 @@
 var opponent = {};
 var player = {};
 
+var playerChoice;
+var opponentChoice;
+
 var wins = {
     // Object to store which cards win against which cards.
     'king': {
@@ -96,6 +99,9 @@ player.play = function (card) {
     var tuple = this.playHand(card);
     var playerWins = tuple[1];
     var reply = tuple[0];
+
+    playerChoice = card;
+
     if (playerWins === 'draw') {
         player.hand.hold(card);
         opponent.hand.hold(reply);
@@ -164,6 +170,9 @@ opponent.chooseCard = function () {
         console.log('*', choices.length, '*');
     }
     var choice = choices[Math.floor(Math.random() * choices.length)];
+
+    opponentChoice = choice;
+
     return choice;
 };
 

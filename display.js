@@ -12,8 +12,11 @@ onload = () => {
     //*//
     canvas = document.getElementById('canvas')
     canvas.style.transform = `translateY(${(window.innerHeight - canvas.getBoundingClientRect().height)/2}px)`
-    positions.player.riverStart.y = canvas.height - 165
-    positions.opponent.riverStart.y = 15
+
+    positions.player.riverStart.y = canvas.height - 330
+    positions.player.table.y = canvas.height / 2
+    positions.opponent.riverStart.y = 30
+
     ctx = canvas.getContext('2d')
     cards = generateCards(drawCards.bind(null, canvas, ctx, cards), 'player')
     opponentCards = generateCards(drawCards.bind(null, canvas, ctx, opponentCards), 'opponent')
@@ -31,6 +34,13 @@ positions = {
       z: 1,
       height: 1240,
       width: 940,
+    },
+    table: {
+      x: 240,
+      y: 0,
+      z: 1,
+      height: 640,
+      width: 480,
     },
     offleft: {
       x: -1040,
@@ -62,6 +72,20 @@ positions = {
       z: 1,
       height: 1240,
       width: 940,
+    },
+    offscreen: {
+      x: 0,
+      y: -1240,
+      z: 1,
+      height: 1240,
+      width: 940,
+    },
+    table: {
+      x: 240,
+      y: 0,
+      z: 1,
+      height: 640,
+      width: 480,
     },
     riverStart: {
       x: 0,
@@ -189,14 +213,24 @@ var updateDeckDisplay = () => {
 }
 
 var zoomOut = () => {
-    var pos
+    let pos = positions.player.riverStart
     cards.forEach((card, index) => {
-        pos = positions.player.riverStart
         moveTo(card, pos.x + (index * pos.fan), pos.y, pos.width, pos.height)
     })
+    pos = positions.opponent.riverStart
     opponentCards.forEach((card, index) => {
-        pos = positions.opponent.riverStart
         moveTo(card, pos.x + (index * pos.fan), pos.y, pos.width, pos.height)
+    })
+}
+
+var zoomIn = () => {
+    let pos = positions.player.center
+    cards.forEach((card, index) => {
+        moveTo(card, pos.x, pos.y, pos.width, pos.height)
+    })
+    pos = positions.opponent.center
+    opponentCards.forEach((card, index) => {
+        moveTo(card, pos.x, pos.y, pos.width, pos.height)
     })
 }
 
@@ -211,13 +245,40 @@ window.swipeRight = () => {
 }
 
 window.swipeUp = () => {
-    play(cards[focusIndex].name)
-    currentOpponentCards = opponentCards.filter(card => {
-        return opponent.hand.cards.includes(card.name)
-    })
-    currentCards = cards.filter(card => {
-        return player.hand.cards.includes(card.name)
-    })
+    setTimeout(() => {
+        play(cards[focusIndex].name)
+
+        let playerPlay = cards.filter(card => {
+            return card.name === playerChoice
+        })[0]
+        let opponentPlay = opponentCards.filter(card => {
+            return card.name === opponentChoice
+        })[0]
+        opponentCards = opponentCards.filter(card => {
+            return card !== opponentPlay
+        }).concat([opponentPlay])
+        cards = cards.filter(card => {
+            return card !== playerPlay
+        }).concat([playerPlay])
+        currentOpponentCards = opponentCards.map(card => { return card })
+        currentCards = cards.map(card => { return card })
+
+        setTimeout(() => {
+            currentOpponentCards = opponentCards.filter(card => {
+              return opponent.hand.cards.includes(card.name)
+            })
+            currentCards = cards.filter(card => {
+              return player.hand.cards.includes(card.name)
+            })
+            zoomOut()
+            setTimeout(() => {
+                zoomIn()
+            }, 500)
+        }, 2000)
+
+        moveTo(playerPlay, positions.player.table.x, positions.player.table.y, positions.player.table.width, positions.player.table.height)
+        moveTo(opponentPlay, positions.opponent.table.x, positions.opponent.table.y, positions.opponent.table.width, positions.opponent.table.height)
+    }, 300)
     zoomOut()
 }
 
