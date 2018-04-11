@@ -32,6 +32,13 @@ onload = () => {
     currentOpponentCards = opponentCards.map(card => { return card })
 }
 
+onresize = () => {
+    canvas = document.getElementById('canvas')
+    info = document.getElementById('info')
+    canvas.style.transform = `translateY(${(window.innerHeight - canvas.getBoundingClientRect().height)/2}px)`
+    info.style.transform = `translateY(-${(window.innerHeight - info.getBoundingClientRect().height)/3.4}px)`
+}
+
 positions = {
   player: {
     center: {
