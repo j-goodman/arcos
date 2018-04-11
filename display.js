@@ -2,6 +2,8 @@ var canvas;
 var ctx;
 var cards = [];
 var opponentCards = [];
+var currentCards = [];
+var currentOpponentCards = [];
 var focusIndex = 5;
 var positions;
 
@@ -13,6 +15,8 @@ onload = () => {
     opponentCards = generateCards(drawCards.bind(null, canvas, ctx, opponentCards), 'opponent');
     initTouchControls();
     setTimeout(drawCards.bind(null, canvas, ctx, cards), 1000)
+    currentCards = cards.map(card => { return card })
+    currentOpponentCards = opponentCards.map(card => { return card })
 };
 
 positions = {
@@ -87,7 +91,6 @@ var clearCanvas = (canvas, ctx) => {
 
 var drawCards = (canvas, ctx, cards) => {
     cards.map((card) => {
-        console.log('Drawing ' + card.name);
         ctx.drawImage(
             card.image,
             card.x,
@@ -119,18 +122,18 @@ var generateCards = (onCardLoad, holder) => {
         card.width = positions[holder].center.width;
     });
     imageLoadTrigger = {
-      loadCount: 0,
-      finishedCount: deck.length,
-      event: onCardLoad,
+        loadCount: 0,
+        finishedCount: deck.length,
+        event: onCardLoad,
     };
     imageLoadTrigger.progress = function () {
-      this.loadCount += 1;
-      if (this.loadCount == this.finishedCount) {
-        this.event();
-      }
+        this.loadCount += 1;
+        if (this.loadCount == this.finishedCount) {
+            this.event();
+        }
     }.bind(imageLoadTrigger);
     deck.forEach((card) => {
-      card.image.onload = imageLoadTrigger.progress;
+        card.image.onload = imageLoadTrigger.progress;
     });
     return deck;
 };
@@ -153,19 +156,19 @@ var moveTo = (card, x, y, width, height) => {
     widthDifference = Math.abs(card.width - width);
     heightDifference = Math.abs(card.height - height);
     int = window.setInterval(() => {
-      frame += 1;
-      card.x += (xDistance / totalFrames) * (card.x < x ? 1 : -1);
-      card.y += (yDistance / totalFrames) * (card.y < y ? 1 : -1);
-      card.width += (widthDifference / totalFrames) * (card.width > x ? 1 : -1);
-      card.height += (heightDifference / totalFrames) * (card.height > y ? 1 : -1);
-      if (frame >= totalFrames) {
-        window.clearInterval(int);
-        card.width = width;
-        card.height = height;
-      }
-      clearCanvas(canvas, ctx);
-      drawCards(canvas, ctx, cards);
-      drawCards(canvas, ctx, opponentCards);
+        frame += 1;
+        card.x += (xDistance / totalFrames) * (card.x < x ? 1 : -1);
+        card.y += (yDistance / totalFrames) * (card.y < y ? 1 : -1);
+        card.width += (widthDifference / totalFrames) * (card.width > x ? 1 : -1);
+        card.height += (heightDifference / totalFrames) * (card.height > y ? 1 : -1);
+        if (frame >= totalFrames) {
+          window.clearInterval(int);
+          card.width = width;
+          card.height = height;
+        }
+        clearCanvas(canvas, ctx);
+        drawCards(canvas, ctx, currentCards);
+        drawCards(canvas, ctx, currentOpponentCards);
     }, 32);
 }
 
@@ -204,18 +207,13 @@ window.swipeRight = () => {
 };
 
 window.swipeUp = () => {
-    var result;
-    var win;
-    result = play(cards[focusIndex].name);
-    win = result[0];
-    if (win === true) {
-        console.log(win);
-    } else if (win === false) {
-        // Remove the losing card from the player's hand
-        cards = cards.filter((card) => {
-            return card.name !== cards[focusIndex].name;
-        });
-    }
+    play(cards[focusIndex].name);
+    currentOpponentCards = opponentCards.filter(card => {
+        return opponent.hand.cards.includes(card.name)
+    })
+    currentCards = cards.filter(card => {
+        return player.hand.cards.includes(card.name)
+    })
     zoomOut();
 };
 

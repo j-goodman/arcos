@@ -1,10 +1,10 @@
 body {
-  align-items: center;
-  background: #301;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  overflow-y: hidden;
+    align-items: center;
+    background: #001;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    overflow-y: hidden;
 }
 
 canvas {
