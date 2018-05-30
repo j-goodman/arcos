@@ -10,7 +10,7 @@ var wins = {
         'king': 'draw',
         'general': true,
         'philosopher': true,
-        'false prophet': true,
+        'false-prophet': true,
         'aristocrat': true,
         'revolutionary': false
     },
@@ -18,7 +18,7 @@ var wins = {
         'king': false,
         'general': 'draw',
         'philosopher': false,
-        'false prophet': true,
+        'false-prophet': true,
         'aristocrat': false,
         'revolutionary': true
     },
@@ -26,15 +26,15 @@ var wins = {
         'king': false,
         'general': true,
         'philosopher': 'draw',
-        'false prophet': true,
+        'false-prophet': true,
         'aristocrat': false,
         'revolutionary': true
     },
-    'false prophet': {
+    'false-prophet': {
         'king': false,
         'general': false,
         'philosopher': false,
-        'false prophet': 'draw',
+        'false-prophet': 'draw',
         'aristocrat': true,
         'revolutionary': true
     },
@@ -42,7 +42,7 @@ var wins = {
         'king': false,
         'general': true,
         'philosopher': true,
-        'false prophet': false,
+        'false-prophet': false,
         'aristocrat': 'draw',
         'revolutionary': false
     },
@@ -50,14 +50,14 @@ var wins = {
         'king': true,
         'general': false,
         'philosopher': false,
-        'false prophet': false,
+        'false-prophet': false,
         'aristocrat': true,
         'revolutionary': 'draw'
     },
 }
 
 var Hand = function () {
-    this.cards = ['king', 'general', 'philosopher', 'false prophet', 'aristocrat', 'revolutionary'];
+    this.cards = ['king', 'general', 'philosopher', 'false-prophet', 'aristocrat', 'revolutionary'];
     this.discarded = []; // Cards that have been killed and removed from play.
     this.holding = []; // Cards that are temporarily unusable while a tie is resolved.
 }
@@ -105,7 +105,7 @@ player.play = function (card) {
     if (playerWins === 'draw') {
         player.hand.hold(card);
         opponent.hand.hold(reply);
-        info.innerText = 'DRAW'
+        console.log('DRAW')
     } else {
         opponent.hand.restore();
         player.hand.restore();
@@ -119,19 +119,37 @@ player.play = function (card) {
     console.log('Opponent:', opponent.hand.cards);
     gameOver = this.gameIsOver();
     if (gameOver) {
+      if (!opponent.mem.playerWins && opponent.mem.playerWins !== 0) {
+          opponent.mem.playerWins = 0
+      }
+      if (!opponent.mem.opponentWins && opponent.mem.opponentWins !== 0) {
+          opponent.mem.opponentWins = 0
+      }
+      if (gameOver === 'YOU WIN') {
+          opponent.mem.playerWins += 1
+      } else if (gameOver === 'COMPUTER WINS') {
+          opponent.mem.opponentWins += 1
+      }
       reset();
       console.log(gameOver);
+      setTimeout(() => {
+          declare(
+              `${gameOver}. (You've won ${opponent.mem.playerWins}/${opponent.mem.opponentWins + opponent.mem.playerWins} games.)`,
+              5000
+          )
+      }, 2500)
       console.log('Resetting game...');
     }
+    window.localStorage.setItem('arcos-opponent-memory', JSON.stringify(opponent.mem));
     return [playerWins, card, reply];
 };
 
 player.gameIsOver = function () {
   var win = false;
   if (player.hand.cards.length === 0 && opponent.hand.cards.length > 0) {
-    win = 'OPPONENT WINS';
+    win = 'COMPUTER WINS';
   } else if (opponent.hand.cards.length === 0 && player.hand.cards.length > 0) {
-    win = 'PLAYER WINS';
+    win = 'YOU WIN';
   } else if (player.hand.cards.length === 0 && opponent.hand.cards.length === 0) {
     player.hand.restore();
     opponent.hand.restore();
@@ -214,7 +232,6 @@ opponent.rememberMove = function (state, move, enemyMove, success) {
 };
 
 var reset = function () {
-    clear();
     window.localStorage.setItem('arcos-opponent-memory', JSON.stringify(opponent.mem));
     opponent.hand = new Hand ();
     player.hand = new Hand ();

@@ -1,16 +1,40 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <link rel='stylesheet' href='style.css'>
-    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Slabo+27px'>
-    <script src='arcos.js'></script>
-    <script src='swipe.js'></script>
-    <script src='display.js'></script>
-    <title>Arcos</title>
-  </head>
-  <body>
-    <canvas id='canvas' width='960' height='1280'></canvas>
-    <h1 id='info'>ARCOS</h1>
-  </body>
+    <head>
+        <meta charset="utf-8">
+        <link rel='stylesheet' href='style.css'>
+        <link href="https://fonts.googleapis.com/css?family=Amatic+SC" rel="stylesheet">
+        <script src='arcos.js'></script>
+        <script src='swipe.js'></script>
+        <script src='display.js'></script>
+        <title>Arcos</title>
+        <link rel='shortcut icon' href='images/icon.png'/>
+    </head>
+    <body>
+        <section className='main-field'>
+            <div class='opponent-cards'>
+                <img class='opponent-card card'></img>
+                <img class='opponent-card card'></img>
+                <img class='opponent-card card'></img>
+                <img class='opponent-card card'></img>
+                <img class='opponent-card card'></img>
+                <img class='opponent-card card'></img>
+            </div>
+            <section class='play-field'>
+                <img class='player-holds-slot'></img>
+                <img class='player-card-slot' src='images/blank.png'></img>
+                <img class='opponent-card-slot' src='images/blank.png'></img>
+                <img class='opponent-holds-slot'></img>
+            </section>
+            <div class='card-info-bar'>Your cards:</div>
+            <div class='player-cards'>
+                <img class='king-card active-card card'></img>
+                <img class='aristocrat-card active-card card'></img>
+                <img class='general-card active-card card'></img>
+                <img class='philosopher-card active-card card'></img>
+                <img class='false-prophet-card active-card card'></img>
+                <img class='revolutionary-card active-card card'></img>
+            </div>
+        </section>
+    </body>
 </html>
