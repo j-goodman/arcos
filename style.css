@@ -57,13 +57,13 @@ body {
 
 @media (max-aspect-ratio: 1/1) {
     .player-card-slot, .opponent-card-slot {
-        width: 48%;
+        width: 49%;
     }
     .card, .player-card-slot, .opponent-card-slot {
-        transform: perspective(700px) rotateY(0deg);
+        transform: perspective(1000px) rotateY(0deg);
     }
     .flipped {
-        transform: perspective(700px) rotateY(180deg);
+        transform: perspective(1000px) rotateY(180deg);
     }
     .card {
         width: 16%;
