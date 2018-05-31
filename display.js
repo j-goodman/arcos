@@ -86,7 +86,7 @@ let resetField = () => {
         slot.style.opacity = 1
     })
     slots[1].classList.add('flipped')
-    slots[1].classList.src = 'images/reverse-blank.png'
+    slots[1].src = 'images/reverse-blank.png'
     let opponentCards = retrieve('opponent-cards')
     opponentCards.innerHTML = ''
     opponent.hand.cards.map(name => {
