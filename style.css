@@ -36,7 +36,7 @@ body {
 }
 
 .card, .player-card-slot, .opponent-card-slot {
-    transform: perspective(200px) rotateY(0deg);
+    transform: perspective(450px) rotateY(0deg);
     transform-style: preserve-3d;
     transition: transform .3s;
 }
@@ -48,7 +48,7 @@ body {
 }
 
 .flipped {
-    transform: perspective(200px) rotateY(180deg);
+    transform: perspective(450px) rotateY(180deg);
 }
 
 .opponent-cards > .card {
@@ -58,6 +58,12 @@ body {
 @media (max-aspect-ratio: 1/1) {
     .player-card-slot, .opponent-card-slot {
         width: 48%;
+    }
+    .card, .player-card-slot, .opponent-card-slot {
+        transform: perspective(700px) rotateY(0deg);
+    }
+    .flipped {
+        transform: perspective(700px) rotateY(180deg);
     }
     .card {
         width: 16%;

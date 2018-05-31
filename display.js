@@ -48,11 +48,11 @@ let chooseCard = evt => {
     let opponentCard = data[2]
 
     retrieve('player-card-slot').src = `images/${playerCard}.png`
-    retrieve('opponent-card-slot').src = `images/reverse.png`
+    retrieve('opponent-card-slot').src = `images/reverse-reverse.png`
 
     setTimeout(() => {
         retrieve('opponent-card-slot').classList.remove('flipped')
-    }, 350)
+    }, 400)
 
     setTimeout(() => {
         retrieve('opponent-card-slot').src = `images/${opponentCard}.png`
@@ -86,6 +86,7 @@ let resetField = () => {
         slot.style.opacity = 1
     })
     slots[1].classList.add('flipped')
+    slots[1].classList.src = 'images/reverse-blank.png'
     let opponentCards = retrieve('opponent-cards')
     opponentCards.innerHTML = ''
     opponent.hand.cards.map(name => {
