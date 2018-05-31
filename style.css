@@ -35,10 +35,20 @@ body {
     width: 14%;
 }
 
+.card, .player-card-slot, .opponent-card-slot {
+    transform: perspective(200px) rotateY(0deg);
+    transform-style: preserve-3d;
+    transition: transform .3s;
+}
+
 .card {
     background-size: contain;
     height: auto;
     width: 12%;
+}
+
+.flipped {
+    transform: perspective(200px) rotateY(180deg);
 }
 
 .opponent-cards > .card {

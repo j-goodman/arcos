@@ -51,6 +51,10 @@ let chooseCard = evt => {
     retrieve('opponent-card-slot').src = `images/reverse.png`
 
     setTimeout(() => {
+        retrieve('opponent-card-slot').classList.remove('flipped')
+    }, 350)
+
+    setTimeout(() => {
         retrieve('opponent-card-slot').src = `images/${opponentCard}.png`
         declare(interactionDescriptions[playerCard][opponentCard] || interactionDescriptions[opponentCard][playerCard])
     }, 500)
@@ -81,6 +85,7 @@ let resetField = () => {
         slot.style.backgroundImage = ''
         slot.style.opacity = 1
     })
+    slots[1].classList.add('flipped')
     let opponentCards = retrieve('opponent-cards')
     opponentCards.innerHTML = ''
     opponent.hand.cards.map(name => {
@@ -193,7 +198,7 @@ let interactionDescriptions = {
         'philosopher': 'DRAW',
         'false-prophet': 'The PHILOSOPHER exposes the FALSE PROPHET.',
         'aristocrat': false,
-        'revolutionary': 'The PHILOSOPHER out-articulates the REVOLUTIONARY.'
+        'revolutionary': 'The PHILOSOPHER hijacks the REVOLUTIONARY\'s movement.'
     },
     'false-prophet': {
         'king': false,

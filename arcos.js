@@ -134,10 +134,10 @@ player.play = function (card) {
       console.log(gameOver);
       setTimeout(() => {
           declare(
-              `${gameOver}. (You've won ${opponent.mem.playerWins}/${opponent.mem.opponentWins + opponent.mem.playerWins} games.)`,
+              `${gameOver}. (You vs. Computer: ${opponent.mem.playerWins}-${opponent.mem.opponentWins})`,
               5000
           )
-      }, 2500)
+      }, 1200)
       console.log('Resetting game...');
     }
     window.localStorage.setItem('arcos-opponent-memory', JSON.stringify(opponent.mem));
