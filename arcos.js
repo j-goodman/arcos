@@ -4,7 +4,7 @@ var player = {};
 var playerChoice;
 var opponentChoice;
 
-var timescale = 3;
+var timescale = 1.8;
 
 var wins = {
     // Object to store which cards win against which cards.

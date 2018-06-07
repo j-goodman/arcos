@@ -137,7 +137,7 @@ let resetField = () => {
 
     setupCardEvents()
 
-    timescale = Math.floor(timescale * 100 * .8) / 100
+    timescale = Math.floor(timescale * 100 * .85) / 100
     timescale = timescale <= 1 ? 1 : timescale
 }
 
