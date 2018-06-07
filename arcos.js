@@ -4,6 +4,8 @@ var player = {};
 var playerChoice;
 var opponentChoice;
 
+var timescale = 3;
+
 var wins = {
     // Object to store which cards win against which cards.
     'king': {
@@ -135,7 +137,7 @@ player.play = function (card) {
       setTimeout(() => {
           declare(
               `${gameOver}. (You vs. Computer: ${opponent.mem.playerWins}-${opponent.mem.opponentWins})`,
-              5000
+              5000 * timescale || 0
           )
       }, 1200)
       console.log('Resetting game...');

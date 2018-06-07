@@ -72,9 +72,9 @@ let chooseCard = evt => {
         loser.style.backgroundImage = `url(${loser.src})`
         loser.style.opacity = .6
         loser.src = 'images/red-x.png'
-    }, 1100)
+    }, 1100 * timescale)
 
-    setTimeout(resetField, 1750)
+    setTimeout(resetField, 1750 * timescale)
 }
 
 let resetField = () => {
@@ -137,7 +137,8 @@ let resetField = () => {
 
     setupCardEvents()
 
-    window.oppo = retrieve('opponent-cards')
+    timescale = Math.floor(timescale * 100 * .8) / 100
+    timescale = timescale <= 1 ? 1 : timescale
 }
 
 let declareLock = false
