@@ -173,6 +173,6 @@ playGames(alpha, alphaPrime, 3200)
 playGames(alpha, bravo, 3)
 playGames(alpha, charlie, 2)
 
-if (Object.keys(opponent.mem).length) < 2500 {
+if (Object.keys(opponent.mem).length < 2500) {
     opponent.mem = alpha.mem
 }
