@@ -5,44 +5,13 @@ let instantiateNewBot = (chooseMethod=alphaMethods.chooseCard) => {
     bot.chooseCard = chooseMethod
     bot.memKey = opponent.memKey
     bot.rememberMove = opponent.rememberMove
+    bot.rememberGameMoves = opponent.rememberGameMoves
+    bot.gameMoves = []
     return bot
 }
 
 let alphaMethods = {}
-alphaMethods.chooseCard = (player, opponent) => {
-    var best = false
-    choices = []
-    var i
-    var memKey = player.memKey([player.hand.cards, opponent.hand.cards])
-    if (!player.mem[memKey]) { // If it's never seen this gamestate before
-        // Filter out cards that can only possibly lose
-        choices = player.hand.cards.filter((card) => {
-            return opponent.hand.cards.filter((opponentCard) => {
-                return wins[card][opponentCard]
-            }).length > 0
-        })
-        if (choices.length === 0) { choices = player.hand.cards }
-    } else {
-        for (i=0 ; i<player.hand.cards.length ; i++) {
-            let cardScore = player.mem[memKey][player.hand.cards[i][0]]
-            if (best === false) {
-                best = cardScore
-            } else if (best < cardScore) {
-                best = cardScore
-            }
-        }
-        for (i=0 ; i<player.hand.cards.length ; i++) {
-            cardScore = player.mem[memKey][player.hand.cards[i][0]]
-            if (cardScore === best) {
-                choices.push(player.hand.cards[i])
-            }
-        }
-    }
-    let choice = choices[Math.floor(Math.random() * choices.length)]
-    // console.log(`${player.name || 'Unnamed'} choosing from...`, player.mem[memKey])
-    // console.log(choice)
-    return choice
-}
+alphaMethods.chooseCard = opponent.chooseCard
 
 let bravoMethods = {}
 bravoMethods.chooseCard = (player, opponent) => {
@@ -81,7 +50,7 @@ charlieMethods.chooseCard = (player, opponent) => {
     return choice
 }
 
-let playGames = (firstPlayer, secondPlayer, numberOfGames) => {
+let playGames = (firstPlayer, secondPlayer, numberOfGames, callback) => {
     let count = 0
     while (count < numberOfGames) {
         count += 1
@@ -96,6 +65,15 @@ let playGame = (firstPlayer, secondPlayer) => {
         playRound(firstPlayer, secondPlayer)
         escape -= 1
     }
+    if (firstPlayer.hand.cards.length > 0) {
+        firstPlayer.rememberGameMoves(firstPlayer, 'win')
+        secondPlayer.rememberGameMoves(secondPlayer, 'loss')
+    } else if (secondPlayer.hand.cards.length > 0) {
+        firstPlayer.rememberGameMoves(firstPlayer, 'loss')
+        secondPlayer.rememberGameMoves(secondPlayer, 'win')
+    }
+    firstPlayer.gameMoves = []
+    secondPlayer.gameMoves = []
     // console.log('Resetting game...');
     firstPlayer.hand = new Hand ()
     secondPlayer.hand = new Hand ()
@@ -144,6 +122,14 @@ let playHand = function (player, opponent, attack) {
     var defense = opponent.chooseCard(opponent, player);
     opponent.rememberMove([opponent.hand.cards, player.hand.cards], defense, attack, wins[defense][attack]);
     player.rememberMove([player.hand.cards, opponent.hand.cards], attack, defense, wins[attack][defense]);
+    opponent.gameMoves.push([
+        opponent.memKey([opponent.hand.cards, player.hand.cards]),
+        defense
+    ])
+    player.gameMoves.push([
+        player.memKey([player.hand.cards, opponent.hand.cards]),
+        attack
+    ])
     // console.log(attack, defense);
     return [defense, wins[attack][defense]];
 }
@@ -166,13 +152,17 @@ let alphaPrime = instantiateNewBot(alphaMethods.chooseCard)
 let bravo = instantiateNewBot(bravoMethods.chooseCard)
 let charlie = instantiateNewBot(charlieMethods.chooseCard)
 
-playGames(alpha, charlie, 200)
-playGames(alpha, bravo, 100)
-playGames(alphaPrime, charlie, 100)
-playGames(alpha, alphaPrime, 3200)
-playGames(alpha, bravo, 3)
-playGames(alpha, charlie, 2)
+if (!opponent.mem.version) {
+    opponent.mem.version = 2
+}
 
-if (Object.keys(opponent.mem).length < 2500) {
+if (Object.keys(opponent.mem).length < 2500 || opponent.mem.version < 3) {
+    playGames(alpha, charlie, 200)
+    playGames(alpha, bravo, 100)
+    playGames(alphaPrime, charlie, 100)
+    playGames(alpha, alphaPrime, 3200)
+    playGames(alpha, bravo, 3)
+    playGames(alpha, charlie, 2)
     opponent.mem = alpha.mem
+    opponent.mem.version = 3
 }

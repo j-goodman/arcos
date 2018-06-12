@@ -90,8 +90,12 @@ Hand.prototype.restore = function () {
 
 player.playHand = function (attack) {
     if (!this.hand.cards.includes(attack)) { return '!' }
-    var defense = opponent.chooseCard();
+    var defense = opponent.chooseCard(opponent, player);
     opponent.rememberMove([opponent.hand.cards, player.hand.cards], defense, attack, wins[defense][attack]);
+    opponent.gameMoves.push([
+        opponent.memKey([opponent.hand.cards, player.hand.cards]),
+        defense
+    ])
     console.log(attack, defense);
     return [defense, wins[attack][defense]];
 }
@@ -129,9 +133,12 @@ player.play = function (card) {
       }
       if (gameOver === 'YOU WIN') {
           opponent.mem.playerWins += 1
+          opponent.rememberGameMoves(opponent, 'loss')
       } else if (gameOver === 'COMPUTER WINS') {
           opponent.mem.opponentWins += 1
+          opponent.rememberGameMoves(opponent, 'win')
       }
+      opponent.gameMoves = []
       reset();
       console.log(gameOver);
       setTimeout(() => {
@@ -159,49 +166,48 @@ player.gameIsOver = function () {
   return win;
 };
 
-opponent.chooseCard = function () {
-    var best = false;
-    choices = [];
-    var i;
-    var memKey = this.memKey([this.hand.cards, player.hand.cards]);
-    if (!this.mem[memKey]) { // If it's never seen this gamestate before
+opponent.chooseCard = (player, opponent) => {
+    var best = false
+    choices = []
+    var i
+    var memKey = player.memKey([player.hand.cards, opponent.hand.cards])
+    if (!player.mem[memKey]) { // If it's never seen this gamestate before
         // Filter out cards that can only possibly lose
-        choices = this.hand.cards.filter((card) => {
-            return player.hand.cards.filter((playerCard) => {
-                return wins[card][playerCard];
-            }).length > 0;
-        });
-        if (choices.length === 0) { choices = this.hand.cards; }
+        choices = player.hand.cards.filter((card) => {
+            return opponent.hand.cards.filter((opponentCard) => {
+                return wins[card][opponentCard]
+            }).length > 0
+        })
+        if (choices.length === 0) { choices = player.hand.cards }
     } else {
-        var cardScore;
-        for (i=0 ; i<this.hand.cards.length ; i++) {
-            cardScore = this.mem[memKey][this.hand.cards[i][0]];
+        for (i=0 ; i<player.hand.cards.length ; i++) {
+            let cardScore = player.mem[memKey][player.hand.cards[i][0]]
             if (best === false) {
-                best = cardScore;
+                best = cardScore
             } else if (best < cardScore) {
-                best = cardScore;
+                best = cardScore
             }
         }
-        for (i=0 ; i<this.hand.cards.length ; i++) {
-            cardScore = this.mem[memKey][this.hand.cards[i][0]];
+        for (i=0 ; i<player.hand.cards.length ; i++) {
+            cardScore = player.mem[memKey][player.hand.cards[i][0]]
             if (cardScore === best) {
-                choices.push(this.hand.cards[i]);
+                choices.push(player.hand.cards[i])
             }
         }
-        console.log('*', choices.length, '*');
     }
-    var choice = choices[Math.floor(Math.random() * choices.length)];
-
-    opponentChoice = choice;
-
-    return choice;
-};
+    let choice = choices[Math.floor(Math.random() * choices.length)]
+    // console.log(`${player.name || 'Unnamed'} choosing from...`, player.mem[memKey])
+    // console.log(choice)
+    return choice
+}
 
 if (window.localStorage.getItem('arcos-opponent-memory')) {
     opponent.mem = JSON.parse(window.localStorage.getItem('arcos-opponent-memory'));
 } else {
     opponent.mem = {};
 }
+
+opponent.gameMoves = []
 
 opponent.memKey = function (state /* state = [ownHand, playerHand] */) {
     var memKey;
@@ -232,6 +238,14 @@ opponent.rememberMove = function (state, move, enemyMove, success) {
         }
     });
 };
+
+opponent.rememberGameMoves = (player, winOrLoss) => {
+    win = winOrLoss === 'win'
+    player.gameMoves.map(move => {
+        player.mem[move[0]][move[1][0]] += win ? 1 : -1
+    })
+    player.gameMoves = []
+}
 
 var reset = function () {
     window.localStorage.setItem('arcos-opponent-memory', JSON.stringify(opponent.mem));
