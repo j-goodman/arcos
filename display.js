@@ -192,34 +192,34 @@ let interactionDescriptions = {
         'philosopher': false,
         'false-prophet': 'The GENERAL has the FALSE PROPHET shot.',
         'aristocrat': false,
-        'revolutionary': 'The GENERAL supresses the REVOLUTIONARY.'
+        'revolutionary': 'The GENERAL has the REVOLUTIONARY shot.'
     },
     'philosopher': {
         'king': false,
-        'general': 'The PHILOSOPHER agitates the troops against the GENERAL.',
+        'general': 'The PHILOSOPHER outlives the GENERAL.',
         'philosopher': 'DRAW',
         'false-prophet': 'The PHILOSOPHER exposes the FALSE PROPHET.',
         'aristocrat': false,
-        'revolutionary': 'The PHILOSOPHER hijacks the REVOLUTIONARY\'s movement.'
+        'revolutionary': 'The PHILOSOPHER hijacks the REVOLUTIONARY.'
     },
     'false-prophet': {
         'king': false,
         'general': false,
         'philosopher': false,
         'false-prophet': 'DRAW',
-        'aristocrat': 'The FALSE PROPHET dupes the ARISTOCRAT.',
-        'revolutionary': 'The FALSE PROPHET corrupts the REVOLUTIONARY.'
+        'aristocrat': 'The FALSE PROPHET fools the ARISTOCRAT.',
+        'revolutionary': 'The FALSE PROPHET fools the REVOLUTIONARY.'
     },
     'aristocrat': {
         'king': false,
-        'general': 'The ARISTOCRAT buys the loyalty of the GENERAL\'s subordinates.',
-        'philosopher': 'The ARISTOCRAT corrupts the PHILOSOPHER.',
+        'general': 'The ARISTOCRAT buys the GENERAL.',
+        'philosopher': 'The ARISTOCRAT buys the PHILOSOPHER.',
         'false-prophet': false,
         'aristocrat': 'DRAW',
         'revolutionary': false
     },
     'revolutionary': {
-        'king': 'The REVOLUTIONARY assassinates the KING.',
+        'king': 'The REVOLUTIONARY murders the KING.',
         'general': false,
         'philosopher': false,
         'false-prophet': false,
